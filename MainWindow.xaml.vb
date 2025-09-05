@@ -712,30 +712,44 @@ StartLaufwegsuche:
             ellipse.Fill = System.Windows.Media.Brushes.White
             ellipse.Stroke = System.Windows.Media.Brushes.LightGray
 
+            ' Beispielhafte Farbauswahl
+            Dim colorStart = System.Windows.Media.Brushes.MediumSeaGreen      ' Startpunkt
+            Dim colorEnd = System.Windows.Media.Brushes.OrangeRed             ' Endpunkt
+            Dim colorNormal = System.Windows.Media.Brushes.LightSkyBlue       ' Zwischenpunkte
+            Dim colorSelected = System.Windows.Media.Brushes.Crimson          ' Auswahlrahmen
+            Dim colorStroke = System.Windows.Media.Brushes.SlateGray          ' Standard-Rand
+            Dim colorTempStart = System.Windows.Media.Brushes.MediumAquamarine
+            Dim colorTempEnd = System.Windows.Media.Brushes.Gold
+            Dim colorTempStroke = System.Windows.Media.Brushes.SteelBlue
+
+            ' ... im Ellipsen-Loop:
             If Laufweg.Contains(p) Then
                 If Laufweg.IndexOf(p) = 0 Then
-                    ellipse.Fill = System.Windows.Media.Brushes.LightGreen
+                    ellipse.Fill = colorStart
                 ElseIf Laufweg.IndexOf(p) = Laufweg.Count - 1 Then
-                    ellipse.Fill = System.Windows.Media.Brushes.Orange
+                    ellipse.Fill = colorEnd
                 Else
-                    ellipse.Fill = System.Windows.Media.Brushes.LightGreen
+                    ellipse.Fill = colorNormal
                 End If
             End If
             If LaufwegTemp.Contains(p) Then
                 If LaufwegTemp.IndexOf(p) = 0 Then
-                    ellipse.Stroke = System.Windows.Media.Brushes.LightGreen
+                    ellipse.Stroke = colorTempStart
                 ElseIf LaufwegTemp.IndexOf(p) = LaufwegTemp.Count - 1 Then
-                    ellipse.Stroke = System.Windows.Media.Brushes.Orange
+                    ellipse.Stroke = colorTempEnd
                 Else
-                    ellipse.Stroke = System.Windows.Media.Brushes.Black
+                    ellipse.Stroke = colorTempStroke
                 End If
             End If
 
             If Edit AndAlso selectedEntries.Contains(p) Then
-                ellipse.Stroke = System.Windows.Media.Brushes.Red
+                ellipse.Stroke = colorSelected
                 ellipse.StrokeThickness = 4
             Else
                 ellipse.StrokeThickness = 3
+                If ellipse.Stroke Is Nothing OrElse ellipse.Stroke Is System.Windows.Media.Brushes.LightGray Then
+                    ellipse.Stroke = colorStroke
+                End If
             End If
 
             ellipse.ToolTip = $"ID: {p.ID} N1:{p.NachbarID} N2:{p.Nachbar2ID}"

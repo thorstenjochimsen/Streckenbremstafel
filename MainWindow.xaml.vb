@@ -24,12 +24,13 @@ Class MainWindow
             NotifyPropertyChanged(NameOf(Laufweg))
         End Set
     End Property
-    Private _LaufwegTemp As List(Of C_Bremswegeintrag)
-    Public Property LaufwegTemp As List(Of C_Bremswegeintrag)
+
+    Private _LaufwegTemp As ObservableCollection(Of C_Bremswegeintrag)
+    Public Property LaufwegTemp As ObservableCollection(Of C_Bremswegeintrag)
         Get
             Return _LaufwegTemp
         End Get
-        Set(value As List(Of C_Bremswegeintrag))
+        Set(value As ObservableCollection(Of C_Bremswegeintrag))
             If _LaufwegTemp Is value Then Return
             _LaufwegTemp = value
             NotifyPropertyChanged(NameOf(LaufwegTemp))
@@ -83,7 +84,7 @@ Class MainWindow
 
         ' Fügen Sie Initialisierungen nach dem InitializeComponent()-Aufruf hinzu.
         Laufweg = New ObservableCollection(Of C_Bremswegeintrag)
-        LaufwegTemp = New List(Of C_Bremswegeintrag)
+        LaufwegTemp = New ObservableCollection(Of C_Bremswegeintrag)
 
         Me.DataContext = Me
         Edit = False
@@ -225,7 +226,7 @@ StartLaufwegsuche:
             Dim aktuellerEintrag As C_Bremswegeintrag = Laufwegsuche(0)(iindex)
             Debug.WriteLine($"Aktueller Eintrag: {aktuellerEintrag.Signalbezeichnung} ({aktuellerEintrag.ID})")
 
-            If aktuellerEintrag.ID = zielEintrag.ID Then 'Ziel erreicht
+            If aktuellerEintrag.ID = ZielEintrag.ID Then 'Ziel erreicht
                 LaufwegKomplett.AddRange(Laufwegsuche(0))
                 Debug.WriteLine("Ziel erreicht bei " & aktuellerEintrag.Signalbezeichnung & " (" & aktuellerEintrag.ID & ")")
                 Exit Do
@@ -261,8 +262,12 @@ StartLaufwegsuche:
 
         Loop
 
-        LaufwegTemp = New List(Of C_Bremswegeintrag)
-        LaufwegTemp.AddRange(LaufwegKomplett)
+        LaufwegTemp = New ObservableCollection(Of C_Bremswegeintrag)
+
+        For Each item In LaufwegKomplett
+            LaufwegTemp.Add(item)
+        Next
+
 
         'laufweg.Reverse()
         ' Ausgabe des Laufwegs
@@ -675,8 +680,8 @@ StartLaufwegsuche:
                     ellipse.Stroke = System.Windows.Media.Brushes.Orange
                 Else
                     ellipse.Stroke = System.Windows.Media.Brushes.Black
-                    End If
                 End If
+            End If
             ellipse.StrokeThickness = 3
 
             ellipse.ToolTip = $"ID: {p.ID} N1:{p.NachbarID} N2:{p.Nachbar2ID}"
@@ -879,7 +884,7 @@ StartLaufwegsuche:
     End Sub
 
     Private Sub BTN_Beenden_Click(sender As Object, e As RoutedEventArgs)
-
+        End
     End Sub
 
     Private Sub Canvas_Strecke_MouseWheel(sender As Object, e As MouseWheelEventArgs)

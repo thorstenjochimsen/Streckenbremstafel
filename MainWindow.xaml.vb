@@ -12,6 +12,7 @@ Class MainWindow
     End Sub
 
     Public Listata As ObservableCollection(Of C_Bremswegeintrag)
+    Public CanvasTexts As New List(Of CanvasText)
 
     Private _Laufweg As New ObservableCollection(Of C_Bremswegeintrag)
     Public Property Laufweg As ObservableCollection(Of C_Bremswegeintrag)
@@ -46,7 +47,6 @@ Class MainWindow
     Private panStart As Point
 
     Private _Edit As Boolean = False
-
     Property StartEintrag As C_Bremswegeintrag = Nothing
     Property ZielEintrag As C_Bremswegeintrag = Nothing
 
@@ -78,6 +78,14 @@ Class MainWindow
         End Set
     End Property
 
+    Private selectedEntries As New ObservableCollection(Of C_Bremswegeintrag)
+    Private selectionRectangle As System.Windows.Shapes.Rectangle = Nothing
+    Private selectionStartPoint As Point
+    Private isSelecting As Boolean = False
+    Private draggedTextBlock As TextBlock = Nothing
+    Private draggedCanvasText As CanvasText = Nothing
+    Private textMouseOffset As Point
+
     Public Sub New()
         ' Dieser Aufruf ist für den Designer erforderlich.
         InitializeComponent()
@@ -92,7 +100,7 @@ Class MainWindow
 
     Private Sub BTN_Laden_Click(sender As Object, e As RoutedEventArgs)
         Listata = LoadListFromXmlFromAppPath()
-
+        CanvasTexts = LoadCanvasTextsFromXml()
         For Each item In Listata
             item.GeschwindigkeitSollChangedCallback = Sub(eintrag)
                                                           AusgabeBerechnen()
@@ -184,21 +192,26 @@ Class MainWindow
         End Try
 
     End Function
-    Private Sub CB_Start_DropDownClosed(sender As Object, e As EventArgs)
-        Berechne_Laufweg()
-    End Sub
-    Private Sub CB_Ziel_DropDownClosed(sender As Object, e As EventArgs)
-        Berechne_Laufweg()
-    End Sub
+    Public Shared Function LoadCanvasTextsFromXml() As List(Of CanvasText)
+        Dim appPath As String = AppDomain.CurrentDomain.BaseDirectory
+        Dim filePath As String = Path.Combine(appPath, "streckendaten.xml")
+        Dim result As New List(Of CanvasText)
+        Dim doc As XDocument = XDocument.Load(filePath)
+        Dim canvasTextElement = doc.Root.Element("CanvasText")
+        If canvasTextElement IsNot Nothing Then
+            For Each txtElem In canvasTextElement.Elements("Text")
+                Dim t As New CanvasText()
+                t.Content = txtElem.Element("Content")?.Value
+                t.X = Double.Parse(txtElem.Element("X")?.Value)
+                t.Y = Double.Parse(txtElem.Element("Y")?.Value)
+                t.FontSize = Double.Parse(txtElem.Element("FontSize")?.Value)
+                t.Color = txtElem.Element("Color")?.Value
+                result.Add(t)
+            Next
+        End If
+        Return result
+    End Function
     Private Sub Berechne_Laufweg()
-        'If CB_Start.SelectedValue Is Nothing Then
-        '    TBHinweis.Text = "Bitte Start auswählen!"
-        '    Return
-        'End If
-        'If CB_Ziel.SelectedValue Is Nothing Then
-        '    TBHinweis.Text = "Bitte Ziel auswählen!"
-        '    Return
-        'End If
 
         If startEintrag Is Nothing Then
             TBHinweis.Text = "Bitte Start auswählen!"
@@ -208,9 +221,6 @@ Class MainWindow
             TBHinweis.Text = "Bitte Ziel auswählen!"
             Return
         End If
-
-        'Dim startEintrag As C_Bremswegeintrag = CType(CB_Start.SelectedItem, C_Bremswegeintrag)
-        'Dim zielEintrag As C_Bremswegeintrag = CType(CB_Ziel.SelectedItem, C_Bremswegeintrag)
 
         Debug.WriteLine($"Laufwegssuche gestartet - Start:{startEintrag.Signalbezeichnung} Ziel:{zielEintrag.Signalbezeichnung}")
 
@@ -245,7 +255,6 @@ StartLaufwegsuche:
                 Debug.WriteLine("Abzweigung gefunden bei " & aktuellerEintrag.Signalbezeichnung & " (" & aktuellerEintrag.ID & ")")
             End If
 
-
             If nextEintrag Is Nothing Then
                 Debug.WriteLine($"Kein weiterer Eintrag gefunden (NachbarID {aktuellerEintrag.NachbarID} nicht vorhanden)!")
                 Laufwegsuche.RemoveAt(0)
@@ -268,8 +277,6 @@ StartLaufwegsuche:
             LaufwegTemp.Add(item)
         Next
 
-
-        'laufweg.Reverse()
         ' Ausgabe des Laufwegs
         TBHinweis.Text = ""
 
@@ -408,8 +415,6 @@ StartLaufwegsuche:
         Next
 
         ZeichneGeschwindigkeitsprofil()
-
-
     End Sub
     Private Sub BTN_Brechnen_Click(sender As Object, e As RoutedEventArgs)
         AusgabeBerechnen()
@@ -581,7 +586,6 @@ StartLaufwegsuche:
                 lastY = y
             Next
 
-
             ' Signalbezeichnungen und gestrichelte Linien unterhalb des Diagramms zeichnen
             For Each eintrag In Laufweg
                 Dim x = margin + ((eintrag.km - minKm) / kmRange) * plotWidth
@@ -621,10 +625,55 @@ StartLaufwegsuche:
     Public Sub ZeichneStrecke()
         Canvas_Strecke.Children.Clear()
 
+        For Each t In CanvasTexts
+            Dim tb As New TextBlock()
+            tb.Text = t.Content
+            tb.FontSize = t.FontSize
+            tb.Foreground = (New BrushConverter()).ConvertFromString(t.Color)
+            Canvas.SetLeft(tb, t.X)
+            Canvas.SetTop(tb, t.Y)
+            Canvas_Strecke.Children.Add(tb)
+
+            ' Drag-Events nur im Editiermodus
+            If Edit Then
+                AddHandler tb.MouseLeftButtonDown, Sub(sender, e)
+                                                       draggedTextBlock = CType(sender, TextBlock)
+                                                       draggedCanvasText = t
+                                                       textMouseOffset = e.GetPosition(Canvas_Strecke)
+                                                       textMouseOffset.X -= t.X
+                                                       textMouseOffset.Y -= t.Y
+                                                       draggedTextBlock.CaptureMouse()
+                                                   End Sub
+
+                AddHandler tb.MouseMove, Sub(sender, e)
+                                             If draggedTextBlock IsNot Nothing AndAlso draggedCanvasText IsNot Nothing AndAlso e.LeftButton = MouseButtonState.Pressed Then
+                                                 Dim pos = e.GetPosition(Canvas_Strecke)
+                                                 draggedCanvasText.X = pos.X - textMouseOffset.X
+                                                 draggedCanvasText.Y = pos.Y - textMouseOffset.Y
+                                                 Canvas.SetLeft(draggedTextBlock, draggedCanvasText.X)
+                                                 Canvas.SetTop(draggedTextBlock, draggedCanvasText.Y)
+                                                 ZeichneStrecke()
+                                             End If
+                                         End Sub
+
+                AddHandler tb.MouseLeftButtonUp, Sub(sender, e)
+                                                     If draggedTextBlock IsNot Nothing Then
+                                                         ' Optional: auf 10er-Raster runden
+                                                         draggedCanvasText.X = CInt(Math.Round(draggedCanvasText.X / 10) * 10)
+                                                         draggedCanvasText.Y = CInt(Math.Round(draggedCanvasText.Y / 10) * 10)
+                                                         draggedTextBlock.ReleaseMouseCapture()
+                                                         draggedTextBlock = Nothing
+                                                         draggedCanvasText = Nothing
+                                                         ZeichneStrecke()
+                                                     End If
+                                                 End Sub
+            End If
+        Next
+
+
         ' Zuerst alle Linien zeichnen (Hintergrund)
         For i As Integer = 0 To Listata.Count - 2
             Dim p = Listata(i)
-
             If p.Nachbar IsNot Nothing Then
                 If (p.PositionX <> 0 Or p.PositionY <> 0) And (p.Nachbar.PositionX <> 0 Or p.Nachbar.PositionY <> 0) Then
                     Dim line As New System.Windows.Shapes.Line()
@@ -649,7 +698,6 @@ StartLaufwegsuche:
                     Canvas_Strecke.Children.Add(line)
                 End If
             End If
-
         Next
 
         ' Danach alle Ellipsen und TextBlöcke zeichnen (Vordergrund)
@@ -670,7 +718,7 @@ StartLaufwegsuche:
                 ElseIf Laufweg.IndexOf(p) = Laufweg.Count - 1 Then
                     ellipse.Fill = System.Windows.Media.Brushes.Orange
                 Else
-                    ellipse.Fill = System.Windows.Media.Brushes.LightGray
+                    ellipse.Fill = System.Windows.Media.Brushes.LightGreen
                 End If
             End If
             If LaufwegTemp.Contains(p) Then
@@ -682,7 +730,13 @@ StartLaufwegsuche:
                     ellipse.Stroke = System.Windows.Media.Brushes.Black
                 End If
             End If
-            ellipse.StrokeThickness = 3
+
+            If Edit AndAlso selectedEntries.Contains(p) Then
+                ellipse.Stroke = System.Windows.Media.Brushes.Red
+                ellipse.StrokeThickness = 4
+            Else
+                ellipse.StrokeThickness = 3
+            End If
 
             ellipse.ToolTip = $"ID: {p.ID} N1:{p.NachbarID} N2:{p.Nachbar2ID}"
 
@@ -693,65 +747,84 @@ StartLaufwegsuche:
             ' Drag-Events hinzufügen
             AddHandler ellipse.MouseLeftButtonDown, Sub(senderEllipse, e)
                                                         If Edit = True Then
-                                                            draggedEllipse = CType(senderEllipse, System.Windows.Shapes.Ellipse)
-                                                            draggedEntry = p
-                                                            mouseOffset = e.GetPosition(Canvas_Strecke)
-                                                            mouseOffset.X -= p.PositionX
-                                                            mouseOffset.Y -= p.PositionY
-                                                            draggedEllipse.CaptureMouse()
+                                                            If selectedEntries.Contains(p) Then
+                                                                ' Start Verschieben aller ausgewählten Einträge
+                                                                draggedEllipse = CType(senderEllipse, System.Windows.Shapes.Ellipse)
+                                                                mouseOffset = e.GetPosition(Canvas_Strecke)
+                                                                draggedEntry = p
+                                                                draggedEllipse.CaptureMouse()
+                                                            ElseIf selectedEntries.Count = 0 Then
+                                                                ' Einzel-Auswahl
+                                                                selectedEntries.Clear()
+                                                                selectedEntries.Add(p)
+                                                                draggedEllipse = CType(senderEllipse, System.Windows.Shapes.Ellipse)
+                                                                mouseOffset = e.GetPosition(Canvas_Strecke)
+                                                                draggedEntry = p
+                                                                draggedEllipse.CaptureMouse()
+                                                            End If
+                                                            ZeichneStrecke()
                                                         Else
                                                             If StartEintrag Is Nothing Then
-                                                                ellipse.Fill = System.Windows.Media.Brushes.LightGreen
+                                                                ellipse.Stroke = System.Windows.Media.Brushes.LightGreen
                                                                 StartEintrag = p
                                                                 TBHinweis.Text = "Start gesetzt: " & p.Signalbezeichnung
-                                                                ' CB_Start.SelectedValue = StartEintrag
                                                                 LaufwegTemp.Clear()
                                                                 Berechne_Laufweg()
                                                             ElseIf StartEintrag Is p Then
-                                                                ellipse.Fill = System.Windows.Media.Brushes.White
+                                                                ellipse.Stroke = System.Windows.Media.Brushes.LightGray
                                                                 StartEintrag = Nothing
                                                                 ZielEintrag = Nothing
-                                                                ' CB_Start.SelectedValue = Nothing
-                                                                ' CB_Ziel.SelectedValue = Nothing
                                                                 LaufwegTemp.Clear()
                                                                 ZeichneStrecke()
                                                             ElseIf StartEintrag IsNot Nothing And ZielEintrag Is Nothing Then
-                                                                ellipse.Fill = System.Windows.Media.Brushes.Orange
+                                                                ellipse.Stroke = System.Windows.Media.Brushes.Orange
                                                                 ZielEintrag = p
                                                                 TBHinweis.Text = "Ziel gesetzt: " & p.Signalbezeichnung
-                                                                ' CB_Start.SelectedValue = StartEintrag
-                                                                ' CB_Ziel.SelectedValue = ZielEintrag
                                                                 Berechne_Laufweg()
                                                             ElseIf StartEintrag IsNot Nothing And ZielEintrag IsNot Nothing Then
-                                                                ellipse.Fill = System.Windows.Media.Brushes.White
+                                                                ellipse.Stroke = System.Windows.Media.Brushes.LightGray
                                                                 StartEintrag = Nothing
-                                                                ' CB_Start.SelectedValue = Nothing
                                                                 ZielEintrag = Nothing
-                                                                '  CB_Ziel.SelectedValue = Nothing
                                                                 LaufwegTemp.Clear()
                                                                 ZeichneStrecke()
                                                             End If
                                                         End If
                                                     End Sub
             AddHandler ellipse.MouseMove, Sub(senderEllipse, e)
-                                              If draggedEllipse IsNot Nothing AndAlso draggedEntry IsNot Nothing AndAlso e.LeftButton = MouseButtonState.Pressed Then
+                                              If Edit AndAlso draggedEllipse IsNot Nothing AndAlso e.LeftButton = MouseButtonState.Pressed AndAlso selectedEntries.Count > 0 Then
                                                   Dim pos = e.GetPosition(Canvas_Strecke)
-                                                  Dim newX = pos.X - mouseOffset.X
-                                                  Dim newY = pos.Y - mouseOffset.Y
-                                                  draggedEntry.PositionX = CInt(newX)
-                                                  draggedEntry.PositionY = CInt(newY)
+                                                  Dim dx = CInt(pos.X - mouseOffset.X)
+                                                  Dim dy = CInt(pos.Y - mouseOffset.Y)
+                                                  For Each entry In selectedEntries
+                                                      entry.PositionX += dx
+                                                      entry.PositionY += dy
+                                                  Next
+                                                  mouseOffset = pos
+                                                  ZeichneStrecke()
+                                              ElseIf Edit AndAlso draggedEllipse IsNot Nothing AndAlso e.LeftButton = MouseButtonState.Pressed AndAlso selectedEntries.Count = 0 Then
+                                                  Dim pos = e.GetPosition(Canvas_Strecke)
+                                                  Dim dx = CInt(pos.X - mouseOffset.X - draggedEntry.PositionX)
+                                                  Dim dy = CInt(pos.Y - mouseOffset.Y - draggedEntry.PositionY)
+                                                  draggedEntry.PositionX += dx
+                                                  draggedEntry.PositionY += dy
+                                                  mouseOffset = e.GetPosition(Canvas_Strecke)
                                                   Canvas.SetLeft(draggedEllipse, draggedEntry.PositionX)
                                                   Canvas.SetTop(draggedEllipse, draggedEntry.PositionY)
-                                                  ZeichneStrecke() ' Canvas neu zeichnen, damit Linien und Text passen
+                                                  ZeichneStrecke()
                                               End If
                                           End Sub
 
             AddHandler ellipse.MouseLeftButtonUp, Sub(senderEllipse, e)
-                                                      If draggedEllipse IsNot Nothing Then
-                                                          draggedEntry.PositionX = CInt(Math.Ceiling(draggedEntry.PositionX / 10) * 10)
-                                                          draggedEntry.PositionY = CInt(Math.Ceiling(draggedEntry.PositionY / 10) * 10)
-                                                          Canvas.SetLeft(draggedEllipse, draggedEntry.PositionX)
-                                                          Canvas.SetTop(draggedEllipse, draggedEntry.PositionY)
+                                                      If draggedEllipse IsNot Nothing And Edit Then
+                                                          If selectedEntries.Count > 0 Then
+                                                              For Each entry In selectedEntries
+                                                                  entry.PositionX = CInt(Math.Ceiling(entry.PositionX / 10) * 10)
+                                                                  entry.PositionY = CInt(Math.Ceiling(entry.PositionY / 10) * 10)
+                                                              Next
+                                                          ElseIf draggedEntry IsNot Nothing Then
+                                                              draggedEntry.PositionX = CInt(Math.Ceiling(draggedEntry.PositionX / 10) * 10)
+                                                              draggedEntry.PositionY = CInt(Math.Ceiling(draggedEntry.PositionY / 10) * 10)
+                                                          End If
                                                           draggedEllipse.ReleaseMouseCapture()
                                                           draggedEllipse = Nothing
                                                           draggedEntry = Nothing
@@ -845,6 +918,20 @@ StartLaufwegsuche:
     Private Sub BTN_XML_Speichern_Click(sender As Object, e As RoutedEventArgs)
         Dim filePath As String = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "streckendaten.xml")
         Dim xmlRoot As New XElement("Streckendaten")
+
+        ' Texte speichern
+        Dim canvasTextElement As New XElement("CanvasText")
+        For Each t In CanvasTexts
+            canvasTextElement.Add(New XElement("Text",
+            New XElement("Content", t.Content),
+            New XElement("X", t.X),
+            New XElement("Y", t.Y),
+            New XElement("FontSize", t.FontSize),
+            New XElement("Color", t.Color)
+        ))
+        Next
+        xmlRoot.Add(canvasTextElement)
+
         For Each item In Listata
             xmlRoot.Add(New XElement("C_Bremswegeintrag",
                 New XElement("Streckennummer", item.Streckennummer),
@@ -868,6 +955,8 @@ StartLaufwegsuche:
                 New XElement("PositionY", item.PositionY)
             ))
         Next
+
+
         xmlRoot.Save(filePath)
         TBHinweis.Text = Now.ToString & " XML gespeichert!"
         ZeichneStrecke()
@@ -902,7 +991,19 @@ StartLaufwegsuche:
     End Sub
 
     Private Sub Canvas_Strecke_MouseDown(sender As Object, e As MouseButtonEventArgs)
-        If e.MiddleButton = MouseButtonState.Pressed Then
+        If Edit AndAlso e.LeftButton = MouseButtonState.Pressed AndAlso (Keyboard.IsKeyDown(Key.LeftCtrl)) Then
+            isSelecting = True
+            selectionStartPoint = e.GetPosition(Canvas_Strecke)
+            selectionRectangle = New System.Windows.Shapes.Rectangle With {
+            .Stroke = System.Windows.Media.Brushes.Red,
+            .StrokeThickness = 2,
+            .Fill = System.Windows.Media.Brushes.Transparent
+        }
+            Canvas.SetLeft(selectionRectangle, selectionStartPoint.X)
+            Canvas.SetTop(selectionRectangle, selectionStartPoint.Y)
+            Canvas_Strecke.Children.Add(selectionRectangle)
+            Canvas_Strecke.CaptureMouse()
+        ElseIf e.MiddleButton = MouseButtonState.Pressed Then
             isPanning = True
             panStart = e.GetPosition(Me)
             Canvas_Strecke.CaptureMouse()
@@ -910,6 +1011,18 @@ StartLaufwegsuche:
     End Sub
 
     Private Sub Canvas_Strecke_MouseMove(sender As Object, e As MouseEventArgs)
+        If isSelecting AndAlso selectionRectangle IsNot Nothing Then
+            Dim pos = e.GetPosition(Canvas_Strecke)
+            Dim x = Math.Min(pos.X, selectionStartPoint.X)
+            Dim y = Math.Min(pos.Y, selectionStartPoint.Y)
+            Dim w = Math.Abs(pos.X - selectionStartPoint.X)
+            Dim h = Math.Abs(pos.Y - selectionStartPoint.Y)
+            Canvas.SetLeft(selectionRectangle, x)
+            Canvas.SetTop(selectionRectangle, y)
+            selectionRectangle.Width = w
+            selectionRectangle.Height = h
+        End If
+
         If isPanning AndAlso e.MiddleButton = MouseButtonState.Pressed Then
             Dim pos = e.GetPosition(Me)
             Dim dx = pos.X - panStart.X
@@ -921,6 +1034,30 @@ StartLaufwegsuche:
     End Sub
 
     Private Sub Canvas_Strecke_MouseUp(sender As Object, e As MouseButtonEventArgs)
+        If isSelecting AndAlso selectionRectangle IsNot Nothing Then
+            Dim rectX = Canvas.GetLeft(selectionRectangle)
+            Dim rectY = Canvas.GetTop(selectionRectangle)
+            Dim rectW = selectionRectangle.Width
+            Dim rectH = selectionRectangle.Height
+            Dim selectionRect = New Rect(rectX, rectY, rectW, rectH)
+
+            selectedEntries.Clear()
+            For Each p In Listata
+                Dim ellipseX = p.PositionX
+                Dim ellipseY = p.PositionY
+                Dim ellipseRect = New Rect(ellipseX, ellipseY, 20, 20)
+                If selectionRect.IntersectsWith(ellipseRect) Then
+                    selectedEntries.Add(p)
+                End If
+            Next
+
+            Canvas_Strecke.Children.Remove(selectionRectangle)
+            selectionRectangle = Nothing
+            isSelecting = False
+            ZeichneStrecke()
+            Canvas_Strecke.ReleaseMouseCapture()
+        End If
+
         If isPanning Then
             isPanning = False
             Canvas_Strecke.ReleaseMouseCapture()
@@ -936,7 +1073,6 @@ StartLaufwegsuche:
         ZielEintrag = Nothing
         ZeichneStrecke()
     End Sub
-
     Private Sub BTN_Löschen_Click(sender As Object, e As RoutedEventArgs)
         LaufwegTemp.Clear()
         Laufweg.Clear()

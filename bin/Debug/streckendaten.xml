@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Streckendaten>
+  <CanvasText>
+    <Text>
+      <Content>AB AAS</Content>
+      <X>20</X>
+      <Y>320</Y>
+      <FontSize>14</FontSize>
+      <Color>#990000</Color>
+    </Text>
+  </CanvasText>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
     <Betriebsstelle>AAS</Betriebsstelle>
@@ -18,8 +27,8 @@
     <MbrP30>0</MbrP30>
     <MbrP40>0</MbrP40>
     <MbrP50>0</MbrP50>
-    <PositionX>640</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>620</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -39,8 +48,8 @@
     <MbrP30>14</MbrP30>
     <MbrP40>23</MbrP40>
     <MbrP50>41</MbrP50>
-    <PositionX>600</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>580</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -60,8 +69,8 @@
     <MbrP30>13</MbrP30>
     <MbrP40>22</MbrP40>
     <MbrP50>37</MbrP50>
-    <PositionX>540</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>520</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -81,8 +90,8 @@
     <MbrP30>24</MbrP30>
     <MbrP40>41</MbrP40>
     <MbrP50>0</MbrP50>
-    <PositionX>480</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>460</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -102,8 +111,8 @@
     <MbrP30>0</MbrP30>
     <MbrP40>0</MbrP40>
     <MbrP50>0</MbrP50>
-    <PositionX>440</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>420</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -123,8 +132,8 @@
     <MbrP30>21</MbrP30>
     <MbrP40>33</MbrP40>
     <MbrP50>53</MbrP50>
-    <PositionX>400</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>380</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -144,8 +153,8 @@
     <MbrP30>12</MbrP30>
     <MbrP40>20</MbrP40>
     <MbrP50>33</MbrP50>
-    <PositionX>360</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>340</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -165,8 +174,8 @@
     <MbrP30>21</MbrP30>
     <MbrP40>33</MbrP40>
     <MbrP50>53</MbrP50>
-    <PositionX>320</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>300</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -186,8 +195,8 @@
     <MbrP30>6</MbrP30>
     <MbrP40>9</MbrP40>
     <MbrP50>13</MbrP50>
-    <PositionX>280</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>260</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -207,8 +216,8 @@
     <MbrP30>0</MbrP30>
     <MbrP40>0</MbrP40>
     <MbrP50>0</MbrP50>
-    <PositionX>240</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>220</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -228,8 +237,8 @@
     <MbrP30>6</MbrP30>
     <MbrP40>8</MbrP40>
     <MbrP50>14</MbrP50>
-    <PositionX>200</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>180</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -249,8 +258,8 @@
     <MbrP30>7</MbrP30>
     <MbrP40>9</MbrP40>
     <MbrP50>17</MbrP50>
-    <PositionX>160</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>140</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -270,8 +279,8 @@
     <MbrP30>10</MbrP30>
     <MbrP40>13</MbrP40>
     <MbrP50>24</MbrP50>
-    <PositionX>120</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>100</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -291,8 +300,8 @@
     <MbrP30>6</MbrP30>
     <MbrP40>7</MbrP40>
     <MbrP50>13</MbrP50>
-    <PositionX>80</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>60</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -312,8 +321,8 @@
     <MbrP30>7</MbrP30>
     <MbrP40>7</MbrP40>
     <MbrP50>10</MbrP50>
-    <PositionX>40</PositionX>
-    <PositionY>130</PositionY>
+    <PositionX>20</PositionX>
+    <PositionY>240</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -333,8 +342,8 @@
     <MbrP30>0</MbrP30>
     <MbrP40>0</MbrP40>
     <MbrP50>0</MbrP50>
-    <PositionX>40</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>20</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -354,8 +363,8 @@
     <MbrP30>12</MbrP30>
     <MbrP40>18</MbrP40>
     <MbrP50>31</MbrP50>
-    <PositionX>80</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>60</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -375,8 +384,8 @@
     <MbrP30>11</MbrP30>
     <MbrP40>16</MbrP40>
     <MbrP50>24</MbrP50>
-    <PositionX>120</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>100</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -396,8 +405,8 @@
     <MbrP30>12</MbrP30>
     <MbrP40>20</MbrP40>
     <MbrP50>30</MbrP50>
-    <PositionX>160</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>140</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -417,8 +426,8 @@
     <MbrP30>11</MbrP30>
     <MbrP40>17</MbrP40>
     <MbrP50>26</MbrP50>
-    <PositionX>200</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>180</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -438,8 +447,8 @@
     <MbrP30>11</MbrP30>
     <MbrP40>17</MbrP40>
     <MbrP50>26</MbrP50>
-    <PositionX>240</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>220</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -459,8 +468,8 @@
     <MbrP30>11</MbrP30>
     <MbrP40>24</MbrP40>
     <MbrP50>36</MbrP50>
-    <PositionX>280</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>260</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -480,8 +489,8 @@
     <MbrP30>9</MbrP30>
     <MbrP40>11</MbrP40>
     <MbrP50>21</MbrP50>
-    <PositionX>320</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>300</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -501,8 +510,8 @@
     <MbrP30>6</MbrP30>
     <MbrP40>6</MbrP40>
     <MbrP50>8</MbrP50>
-    <PositionX>360</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>340</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -522,8 +531,8 @@
     <MbrP30>10</MbrP30>
     <MbrP40>13</MbrP40>
     <MbrP50>24</MbrP50>
-    <PositionX>400</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>380</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -543,8 +552,8 @@
     <MbrP30>63</MbrP30>
     <MbrP40>80</MbrP40>
     <MbrP50>101</MbrP50>
-    <PositionX>440</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>420</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -564,8 +573,8 @@
     <MbrP30>30</MbrP30>
     <MbrP40>49</MbrP40>
     <MbrP50>62</MbrP50>
-    <PositionX>480</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>460</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -585,8 +594,8 @@
     <MbrP30>74</MbrP30>
     <MbrP40>100</MbrP40>
     <MbrP50>0</MbrP50>
-    <PositionX>520</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>500</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -606,8 +615,8 @@
     <MbrP30>111</MbrP30>
     <MbrP40>132</MbrP40>
     <MbrP50>157</MbrP50>
-    <PositionX>560</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>540</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -627,8 +636,8 @@
     <MbrP30>69</MbrP30>
     <MbrP40>88</MbrP40>
     <MbrP50>110</MbrP50>
-    <PositionX>600</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>580</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1244</Streckennummer>
@@ -648,8 +657,8 @@
     <MbrP30>90</MbrP30>
     <MbrP40>106</MbrP40>
     <MbrP50>132</MbrP50>
-    <PositionX>640</PositionX>
-    <PositionY>170</PositionY>
+    <PositionX>620</PositionX>
+    <PositionY>280</PositionY>
   </C_Bremswegeintrag>
   <C_Bremswegeintrag>
     <Streckennummer>1225</Streckennummer>
